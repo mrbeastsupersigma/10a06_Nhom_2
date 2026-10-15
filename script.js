@@ -23,7 +23,6 @@ const toggle=document.querySelector(".menu-toggle"),links=document.querySelector
  const render=(index)=>{
   current=Math.max(0,Math.min(sourceSlides.length-1,index));
   const clone=sourceSlides[current].cloneNode(true);
-  clone.querySelectorAll(".sahur-hero").forEach(el=>el.remove());
   clone.querySelectorAll("[id]").forEach(el=>el.removeAttribute("id"));
   slideHost.replaceChildren(clone);
   root.dataset.slide=String(current);
