@@ -88,3 +88,33 @@ const toggle=document.querySelector(".menu-toggle"),links=document.querySelector
  });
  // No speaker notes or private details are collected or rendered.
 })();
+
+
+// Scroll story: update one highlighted idea as its step reaches the reading zone.
+// In reduced-motion mode all three ideas remain visible without scroll-triggered emphasis.
+(()=> {
+ const section=document.getElementById("story");
+ if(!section)return;
+ const steps=[...section.querySelectorAll("[data-story-step]")];
+ const reduced=window.matchMedia("(prefers-reduced-motion: reduce)");
+ if(reduced.matches){
+   steps.forEach(step=>step.classList.add("is-active"));
+   return;
+ }
+ if(!("IntersectionObserver" in window)){
+   steps.forEach(step=>step.classList.add("is-active"));
+   return;
+ }
+ const observer=new IntersectionObserver(entries=>{
+   const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio);
+   if(!visible.length)return;
+   steps.forEach(step=>step.classList.toggle("is-active",step===visible[0].target));
+ },{root:null,rootMargin:"-28% 0px -28% 0px",threshold:[0,.15,.35,.6,.85]});
+ steps.forEach(step=>observer.observe(step));
+ reduced.addEventListener?.("change",event=>{
+   if(event.matches){
+     observer.disconnect();
+     steps.forEach(step=>step.classList.add("is-active"));
+   }
+ });
+})();
